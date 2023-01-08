@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link type="text/css" rel="stylesheet" href="/public/styles.css">
+    <link type="text/css" rel="stylesheet" href="/home/home.css">
+    <link rel="stylesheet" href="/lib/font/css/all.min.css">
+    <title>Home</title>
+</head>
+
+<body>
+    <div class="grid-container">
+        <div id="group">
+            <div id="toolbar">
+                <a><i class="fas fa-home"></i></a>
+                <a class="active" href="/">Groups</a>
+                <a style="float: right;" @click="refresh()"><i class="fas fa-sync"></i></a>
+            </div>
+            <div id="save-field" class="content" v-show="display">
+                <label>
+                    <input type="text" style="width: 38%;" placeholder="words" @change="added=true" v-model="title">
+                </label>
+                <textarea rows="4" placeholder="User note" style="width: 55%; float: right;" v-model="note"></textarea>
+                <label>
+                    <input style="width: 16%;height: 15px;" list="groups" placeholder="group" v-model="group">
+                </label>
+                <span>
+                    <i style="width: 8%;text-align: left;font-size: 18px;" class="fas fa-trash" @click="remove()"></i>
+                    <i style="width: 2%;text-align: center;" :class="save_status"></i>
+                    <i style="width: 8%;text-align: right;font-size: 20px;" class="fas fa-save" @click="save()"></i>
+                </span>
+            </div>
+            <div id="quiz" class="content" v-show=display>
+                <div class="card">
+                    <div class="center-box loader-box" v-show="loading">
+                        <div class="loader"></div>
+                    </div>
+                    <div v-show="!loading">
+                        <b v-show="current_question" class="info" style="padding: 8px; display: inline-block;">
+                            {{current_question.index+1}}/{{questions.length}}
+                        </b>
+                        <span class="close-btn" @click="close()">
+                            <i class="fas fa-times"></i>
+                        </span>
+                        <div v-if="current_question">
+                            <div id="pron-us">
+                                <span class="pron-hint">
+                                    <i class="fas fa-eye"></i>
+                                    <b>US</b>
+                                    <span class="pron" :hidden="current_question.hasAudio && !checkUserInput">
+                                        {{current_question.correct_ans.us.text}}
+                                    </span>
+                                </span><br>
+                                <div class="volume-btn" onclick="playAudio(this)">
+                                    <span v-if="current_question.correct_ans.us.media">
+                                        <i class="fas fa-volume-up"></i>
+                                        <audio>
+                                            <source :src="current_question.correct_ans.us.media" type="audio/mp3">
+                                            <source :src="`https://dictionary.cambridge.org${current_question.correct_ans.us.media}`" type="audio/mp3">
+                                        </audio>
+                                    </span>
+                                    <i v-else class="fas fa-volume-mute"></i>
+                                </div>
+                            </div>
+                            <input id="title" type="text" :class="checkUserInput ? 'pos' : 'neg'"
+                                :placeholder="current_question.hasProunce ? '' : current_question.correct_ans.title"
+                                :disabled="checkUserInput"
+                                v-model.lazy="current_question.user_input">
+                            <i id="title-hint" class="fas fa-eye" @click="current_question.hasProunce = false"></i>
+                            <div id="pron-uk">
+                                <span class="pron-hint">
+                                    <span class="pron" :hidden="current_question.hasAudio && !checkUserInput">
+                                        {{current_question.correct_ans.uk.text}}
+                                    </span>
+                                    <b>UK</b>
+                                    <i class="fas fa-eye"></i>
+                                </span><br>
+                                <div class="volume-btn" onclick="playAudio(this)">
+                                    <span v-if="current_question.correct_ans.uk.media">
+                                        <i class="fas fa-volume-up"></i>
+                                        <audio>
+                                            <source :src="current_question.correct_ans.uk.media" type="audio/mp3">
+                                            <source :src="`https://dictionary.cambridge.org${current_question.correct_ans.uk.media}`" type="audio/mp3">
+                                        </audio>
+                                    </span>
+                                    <i v-else class="fas fa-volume-mute"></i>
+                                </div>
+                            </div>
+                            <div id="answers">
+                                <div v-show="checkUserInput">
+                                    <h3 class="info">
+                                        {{current_question.correct_count}}/{{current_question.correct_max}}
+                                    </h3>
+                                    <div v-for="(ans, i) in current_question.total_ans" class="button" :class="ans.status" @click="checkAnswer(ans)">
+                                        {{ans.meaning}} ({{ans.grammar}})
+                                        <span :class="ans.status == 'success' ? 'pos' : 'neg'" v-show="ans.status" style="float: right;">
+                                            {{ans.title}}
+                                            <i class="fas" :class="ans.status == 'success' ? 'fa-check' : 'fa-times'"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-show="checkDone">
+                                <div style="text-align: center;">
+                                    <h3 class="info">
+                                        {{current_question.correct_ans.title}}
+                                    </h3>
+                                    <div>{{current_question.correct_ans.note}}</div>
+                                </div>
+                                <div id="examples">
+                                    <ul>
+                                        <li v-for="example in current_question.correct_ans.examples">
+                                            <p>{{example}}</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <span id="next-btn" class="button" @click="next(current_question.index+1)">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div v-else style="text-align: center;padding-top: 25vh">
+                            <h3>{{message}}</h3><br><br>
+                            <span v-if="ready" class="button" @click="start()">Start</span>
+                            <span v-else class="button fail" @click="close()">Return</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="group-field" v-show=display>
+                <datalist id="groups">
+                    <option v-if="g != 'all'" v-for="(c,g) in groups" :value="g"></option>
+                </datalist>
+                <div class="center-box loader-box" v-show="loading">
+                    <div class="loader"></div>
+                </div>
+                <div class="grid-container content" v-show="!loading">
+                    <div class="card" style="position: relative;" >
+                        <div>
+                            <template v-for="(c,g) in groups">
+                                <span class="button" :class="current_group == g ? 'active' : ''" @click="reload(g)">
+                                    <span class="button-tail">{{c}}</span>
+                                    {{g}}
+                                </span>
+                            </template> 
+                        </div>
+                        <div class="list">
+                            <div class="item" v-for="w in checked" style="display: inline-block;" @click="unCheck(w)">
+                                {{w}}
+                                <i class="neg fas fa-times"></i>
+                            </div>
+                        </div>
+    
+                        <span class="button" style="position: absolute;bottom: 0;left: 0;" @click="newGame('read')">
+                            Read
+                        </span>
+                        <span class="button" style="position: absolute;bottom: 0;right: 0" @click="newGame('listen')">
+                            Listen
+                        </span>
+                    </div>
+                    <div class="card">
+                        <div style="font-size: 21px;float: left;">
+                            <i style="padding: 10px 15px;" class="fas fa-check-square" @click="toggleAll()"></i>
+                            <i v-show="groups[current_group]" style="padding: 10px 15px;" class="fas fa-trash" @click="remove(checked)">
+                            </i>
+                            <span style="padding: 10px 15px;">{{checked.length}}</span>
+                        </div>
+                        <div v-if="groups[current_group]" style="text-align: right;">
+                            <span class="button button-sm active">
+                                <span class="button-tail">{{groups[current_group]}}</span>
+                                {{current_group}}
+                            </span>
+                        </div>
+                        <div class="list">
+                            <template v-for="w in current_words">
+                                <i v-show="!w.loading" class="left fas fa-times" @click="w.loading=true;remove([w.title])"></i>
+                                <i v-show="w.loading" class="left nor fas fa-spinner fa-spin"></i>
+                                <i v-if="w.added" class="fas fa-edit" @click="search(w)"></i>
+                                <i v-else class="fas fa-arrow-right" @click="search(w)"></i>
+                                <label class="item">
+                                    <input type="checkbox" v-model="checked" :value="w.title">
+                                    {{w.title}}
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="dictionary">
+            <div id="search" class="content">
+                <h2>Cambridge Dictionary</h2>
+                <i style="padding: 10px 15px;" @click="clear()" class="fas fa-times"></i>
+                <div class="autocomplete">
+                    <input id="search-bar" type="text" placeholder="Search for words ..." autocomplete="off"
+                        v-model="word">
+                    <div class="autocomplete-items">
+                        <div v-for="sg in suggestions" @click="search(sg)">{{sg}}</div>
+                    </div>
+                </div>
+                <i style="padding: 10px 15px;" class="fas fa-search" @click="search()"></i>
+            </div>
+            <div v-show="!loading">
+                <div v-if="!words.length" class="content center-box">
+                    <h2>{{message}}</h2>
+                </div>
+                <template v-for="(word, i) in total_words">
+                    <div class="content word-category">
+                        <i>{{word.category || word.title}}</i>
+                    </div>
+                    <div class="content">
+                        <div class="pronounce">
+                            <template v-for="lang in ['us', 'uk']">
+                                <p v-if="word.pronounce[lang].text || word.pronounce[lang].media">
+                                    {{lang.toUpperCase()}}
+                                    <a onclick="playAudio(this)" v-if="word.pronounce[lang].media">
+                                        <i class="fas fa-volume-up"></i>
+                                        <audio preload="auto">
+                                            <source
+                                                :src="`https://dictionary.cambridge.org${word.pronounce[lang].media}`"
+                                                type="audio/mp3">
+                                            <source :src="word.pronounce[lang].media"
+                                                type="audio/mp3">
+                                        </audio>
+                                    </a>
+                                    <a v-else>
+                                        <i class="fas fa-volume-mute"></i>
+                                    </a>
+                                    {{word.pronounce[lang].text}}
+                                </p>
+                            </template>
+                        </div>
+                        <div class="title">
+                            <h1>{{word.title}}
+                                <i v-show="saved" class="fas fa-star" @click="remove(word.title)"></i>
+                            </h1>
+                            <i><b>{{word.grammar}}</b></i>
+                            <i class="info">{{word.info}}</i><br>
+                            <i class="info">{{word.infl}}</i>
+                        </div>
+                        <template v-for="content in word.contents">
+                            <div class="card" v-for="meaning in content.meanings">
+                                <i class="info">{{content.guideword}}</i>
+                                <i style="float: right;" class="info">{{meaning.info}}</i>
+                                <h3>{{meaning.meaning}}</h3>
+                                <div class="example">
+                                    <ul>
+                                        <li v-for="example in meaning.examples">
+                                            <p>{{example}}</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template v-for="(phrases, category) in total_phrases">
+                    <template v-for="phrase in phrases">
+                        <div class="content word-category">
+                            <i>phrase {{category ? `| ${category}` : ''}}</i>
+                        </div>
+                        <div class="content" style="background-color: #e6f7ff;">
+                            <h2>{{phrase.title}}</h2>
+                            <i class="info">{{phrase.info}}</i>
+                            <div class="card">
+                                <div v-for="meaning in phrase.meanings">
+                                    <i class="info">{{meaning.info}}</i>
+                                    <h3>{{meaning.meaning}}</h3>
+                                    <div class="example">
+                                        <ul>
+                                            <li v-for="example in meaning.examples">
+                                                <p>{{example}}</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+
+            </div>
+            <div class="center-box loader-box" v-show="loading">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/lib/vue/vue.min.js"></script>
+    <script src="/home/home.js"></script>
+</body>
+
+</html>

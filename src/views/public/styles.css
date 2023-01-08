@@ -1,0 +1,33 @@
+* {font-family: 'Roboto Mono',monospace,sans-serif;}
+/* *::-webkit-scrollbar {display: none;} */
+  
+p {font-size: 14px;}
+h3 {font-size: 1.07em;}
+
+#toolbar {display: inline-block;width: 100%;background-color: #f3f3f3;font-weight: bold;position: sticky;top: 0;z-index: 10}
+#toolbar a {float: left; padding: 10px;font-size: 14px;color: black;cursor: pointer;margin-right: 5px;}
+#toolbar input, #toolbar select, #toolbar a, #pagination a{border: none;outline: none;text-decoration: none;}
+#toolbar a:hover {background-color: #ddd;}
+#toolbar a.active {background-color: #04AA6D;color: white;}
+
+.neg {color: #e60000;}
+.bg-neg {background-color: #ecc8c5}
+.pos {color: green;}
+.bg-pos {background-color: #def2d6}
+.nor {color: orange;}
+.bg-nor {background-color: #f8f3d6}
+
+.loader {
+    border: 14px solid #f3f3f3;
+    border-top: 14px solid #009879;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+    z-index: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "geo": "Kazakhstan [KZ]",
+    "isp": "tele2.kz",
+    "ecpm": "4.014",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 1
+  },
+  {
+    "geo": "Kazakhstan [KZ]",
+    "isp": "beeline",
+    "ecpm": "4.990",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 2
+  },
+  {
+    "geo": "France [FR]",
+    "isp": "sfr",
+    "ecpm": "8.065",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 3
+  },
+  {
+    "geo": "France [FR]",
+    "isp": "orange",
+    "ecpm": "6.818",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 4
+  },
+  {
+    "geo": "Azerbaijan [AZ]",
+    "isp": "azercell",
+    "ecpm": "15.026",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 5
+  },
+  {
+    "geo": "France [FR]",
+    "isp": "bouygues",
+    "ecpm": "4.783",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 6
+  },
+  {
+    "geo": "El Salvador [SV]",
+    "isp": "movistar",
+    "ecpm": "3.131",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 7
+  },
+  {
+    "geo": "Costa Rica [CR]",
+    "isp": "kolbi ice",
+    "ecpm": "2.311",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 8
+  },
+  {
+    "geo": "Spain [ES]",
+    "isp": "orange",
+    "ecpm": "2.707",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 9
+  },
+  {
+    "geo": "Italy [IT]",
+    "isp": "tim",
+    "ecpm": "4.696",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 10
+  },
+  {
+    "geo": "Guyana [GY]",
+    "isp": "gt&amp;t cellink plus",
+    "ecpm": "0.826",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 11
+  },
+  {
+    "geo": "Cuba [CU]",
+    "isp": "cubacel",
+    "ecpm": "0.365",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 12
+  },
+  {
+    "geo": "Spain [ES]",
+    "isp": "yoigo",
+    "ecpm": "3.471",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 13
+  },
+  {
+    "geo": "Martinique [MQ]",
+    "isp": "digicel",
+    "ecpm": "27.635",
+    "last24ecpm": 0,
+    "lasthourecpm": 0,
+    "rank": 14
+  }
+]
