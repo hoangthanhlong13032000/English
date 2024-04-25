@@ -35,7 +35,7 @@ const sendMessage = (text) => {
 }
 
 const setWebhook = () => {
-  makeRequest(METHODS.SET_WEBHOOK, {
+  makeRequest(METHODS.SET_WEBHOOK,{
     url: DEPLOYED_URL
   })
 }
@@ -93,11 +93,11 @@ const addExpense = (text) => {
 
 // Webhooks
 
-const doPost = (request) => {
+const doPost = (request) =>{
   const contents = JSON.parse(request.postData.contents);
   const text = contents.message.text;
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  addExpense(text);
-  const totalExpenses = sheet.getRange(SUM_CELL).getValue().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  addExpense(text); 
+  const totalExpenses = sheet.getRange(SUM_CELL).getValue().toLocaleString('vi-VN', {style : 'currency', currency : 'VND'});
   sendMessage(`Tổng chi tiêu: ${totalExpenses}`);
 }

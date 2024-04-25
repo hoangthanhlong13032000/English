@@ -5,7 +5,7 @@ const PronSchema = mongoose.Schema({
     media: {type:String, default: ''}
 });
 const PronounceSchema = mongoose.Schema({
-    us: PronSchema,
+    us: PronSchema, 
     uk: PronSchema
 });
 const MeaningSchema = mongoose.Schema({
